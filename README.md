@@ -1,6 +1,9 @@
 Supported tags and respective `Dockerfile` links
 ================================================
 
+  Docker images for qBittorrent-Enhanced Edition (https://github.com/c0re100/qBittorrent-Enhanced-Edition).
+  This fork starts from v4.1.6.1
+
   * [`latest` is the latest release built from source code on Alpine Linux (currently >4.1.x)](https://github.com/wernight/docker-qbittorrent/blob/master/Dockerfile) [![](https://images.microbadger.com/badges/image/wernight/qbittorrent.svg)](http://microbadger.com/images/wernight/qbittorrent "Get your own image badge on microbadger.com")
   * [`stable` is the latest packaged stable Debian packaged version (currently 3.3.x)](https://github.com/wernight/docker-qbittorrent/blob/stable/Dockerfile) [![](https://images.microbadger.com/badges/image/wernight/qbittorrent:stable.svg)](http://microbadger.com/images/wernight/qbittorrent "Get your own image badge on microbadger.com")
   * [`4`, `4.1`, `4.1.0` tagged version built from source code (based on Alpine)](https://github.com/wernight/docker-qbittorrent/blob/v4.1.0/Dockerfile) [![](https://images.microbadger.com/badges/image/wernight/qbittorrent:4.1.0.svg)](http://microbadger.com/images/wernight/qbittorrent "Get your own image badge on microbadger.com")
