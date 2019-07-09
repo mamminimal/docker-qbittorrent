@@ -53,9 +53,8 @@ RUN set -x \
     # Build qBittorrent from source code
  && git clone ${QBITTORRENT_REPO_URL} /tmp/qbittorrent \
  && cd /tmp/qbittorrent \
-    # Checkout latest release
- && latesttag=$(git describe --tags `git rev-list --tags --max-count=1`) \
- && git checkout $latesttag \
+    # Checkout release4.1.6.1
+ && git checkout release-4.1.6.1 \
     # Compile
  && export PKG_CONFIG_PATH=/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH \
  && ./configure --disable-gui \
