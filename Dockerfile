@@ -1,5 +1,8 @@
 FROM alpine:3.8
 
+ARG LIBTORRENT_RELEASE_TAG=libtorrent-1_1_13
+ARG QBITTORRENT_REPO_URL=https://github.com/c0re100/qBittorrent-Enhanced-Edition.git
+
 # Install required packages
 RUN apk add --no-cache \
         boost-system \
@@ -10,7 +13,7 @@ RUN apk add --no-cache \
         qt5-qtbase
 
 # Compiling qBitTorrent following instructions on
-# https://github.com/qbittorrent/qBittorrent/wiki/Compiling-qBittorrent-on-Debian-and-Ubuntu#Libtorrent
+#  
 RUN set -x \
     # Install build dependencies
  && apk add --no-cache -t .build-deps \
@@ -22,18 +25,21 @@ RUN set -x \
         libressl-dev \
     # Build lib rasterbar from source code (required by qBittorrent)
     # Until https://github.com/qbittorrent/qBittorrent/issues/6132 is fixed, need to use version 1.0.*
- && LIBTORRENT_RASTERBAR_URL=$(curl -sSL https://api.github.com/repos/arvidn/libtorrent/releases/latest | grep browser_download_url  | head -n 1 | cut -d '"' -f 4) \
+ && LIBTORRENT_RASTERBAR_URL=$(curl -sSL https://api.github.com/repos/arvidn/libtorrent/releases/tags/${LIBTORRENT_RELEASE_TAG} | grep browser_download_url  | grep libtorrent-rasterbar | head -n 1 | cut -d '"' -f 4) \
+ && CPU_COUNT=$(nproc) \
  && mkdir /tmp/libtorrent-rasterbar \
  && curl -sSL $LIBTORRENT_RASTERBAR_URL | tar xzC /tmp/libtorrent-rasterbar \
  && cd /tmp/libtorrent-rasterbar/* \
  && mkdir build \
  && cd build \
  && cmake .. \
- && make install \
+ && make install -j${CPU_COUNT} \
     # Clean-up
  && cd / \
  && apk del --purge .build-deps \
  && rm -rf /tmp/*
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
 
 RUN set -x \
     # Install build dependencies
@@ -45,14 +51,16 @@ RUN set -x \
         libressl-dev \
         qt5-qttools-dev \
     # Build qBittorrent from source code
- && git clone https://github.com/qbittorrent/qBittorrent.git /tmp/qbittorrent \
+ && git clone ${QBITTORRENT_REPO_URL} /tmp/qbittorrent \
  && cd /tmp/qbittorrent \
     # Checkout latest release
  && latesttag=$(git describe --tags `git rev-list --tags --max-count=1`) \
  && git checkout $latesttag \
     # Compile
- && PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./configure --disable-gui --disable-stacktrace \
- && make install \
+ && export PKG_CONFIG_PATH=/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH \
+ && ./configure --disable-gui \
+ && CPU_COUNT=$(nproc) \
+ && make install -j${CPU_COUNT} \
     # Clean-up
  && cd / \
  && apk del --purge .build-deps \
