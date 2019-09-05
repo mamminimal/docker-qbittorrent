@@ -1,7 +1,7 @@
 FROM alpine:3.8
 
 ARG LIBTORRENT_RELEASE_TAG=libtorrent-1_1_13
-ARG QBITTORRENT_REPO_URL=https://github.com/c0re100/qBittorrent-Enhanced-Edition.git
+ARG QBITTORRENT_REPO_URL=https://github.com/qbittorrent/qBittorrent.git
 
 # Install required packages
 RUN apk add --no-cache \
